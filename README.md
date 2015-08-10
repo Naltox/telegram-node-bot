@@ -8,7 +8,7 @@ First of all you need to create your bot and get Token, you can do it right in t
 Now lets write simplr bot!
 
 ```js 
-var bot = require('telegram-bot')('YOUR_TOKEN')
+var bot = require('telegram-node-bot')('YOUR_TOKEN')
 
 bot.start({
 	'ping': function(chatId, user, args){

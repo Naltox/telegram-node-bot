@@ -1,5 +1,5 @@
 {
-  "name": "node-telegram-bot",
+  "name": "telegram-node-bot",
   "version": "1.0.0",
   "description": "Modile for creating Telegram bots.",
   "main": "lib/telegram.js",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Naltox/node-telegram-bot.git"
+    "url": "https://github.com/Naltox/telegram-node-bot.git"
   },
   "keywords": [
     "telegram",
@@ -20,8 +20,8 @@
   "bugs": {
     "url": "https://github.com/Naltox/telegram-bot/issues"
   },
-  "homepage": "https://github.com/Naltox/node-telegram-bot",
-  "dependencies" :{ 
-    "tiny_request" : "latest" 
+  "homepage": "https://github.com/Naltox/telegram-node-bot",
+  "dependencies": {
+    "tiny_request": "latest"
   }
 }
