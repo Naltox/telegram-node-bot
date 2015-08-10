@@ -1,0 +1,27 @@
+{
+  "name": "telegram-bot",
+  "version": "1.0.0",
+  "description": "Modile for creating Telegram bots.",
+  "main": "lib/telegram.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Naltox/telegram-bot.git"
+  },
+  "keywords": [
+    "telegram",
+    "bot",
+    "API"
+  ],
+  "author": "Narek Abovyan <xeroxaltox@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Naltox/telegram-bot/issues"
+  },
+  "homepage": "https://github.com/Naltox/telegram-bot",
+  "dependencies" :{ 
+    "tiny_request" : "latest" 
+  }
+}
