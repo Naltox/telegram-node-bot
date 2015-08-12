@@ -5,7 +5,7 @@ Simple node module for creating Telegram bots.
 
 First of all you need to create your bot and get Token, you can do it right in telegram, just white to @BotFather.
 
-Now lets write simplr bot!
+Now lets write simple bot!
 
 ```js 
 var bot = require('telegram-node-bot')('YOUR_TOKEN')
