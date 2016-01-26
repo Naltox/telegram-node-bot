@@ -63,7 +63,7 @@ For that case you have routeTo function:
 ```js 
 tg.controller('StartController', ($) => {
 	tg.for('/profile', ($) => {
-		if(logined){
+		if(!logined){
 			$.routeTo("/login")
 		}		
 	}) 
