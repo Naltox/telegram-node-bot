@@ -3,7 +3,7 @@ Very powerful module for creating Telegram bots.
 
 ## Get started
 
-First of all you need to create your bot and get Token, you can do it right in telegram, just whrite to @BotFather.
+First of all you need to create your bot and get Token, you can do it right in telegram, just write to @BotFather.
 
 Now lets write simple bot!
 

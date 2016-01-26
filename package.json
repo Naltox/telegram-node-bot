@@ -16,7 +16,7 @@
     "API"
   ],
   "author": "Narek Abovyan <xeroxaltox@gmail.com>",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/Naltox/telegram-bot/issues"
   },
