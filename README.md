@@ -51,7 +51,7 @@ tg.router.
     when(['/start'], 'StartController').
     when(['/stop'], 'StopController').
     when(['/restart'], 'RestartController').
-    otherWise('OtherwiseController')
+    otherwise('OtherwiseController')
 ``` 
 Now all unknown commands will be handled by OtherwiseController.
 
