@@ -81,7 +81,7 @@ tg.controller('ExampleController', ($) => {
 	tg.for('/test', ($) => {
 		 //will handle /test command		
 	}) 	
-	tg.for('/exaple', ($) => {
+	tg.for('/example', ($) => {
 		 //will handle /exaple command		
 	})
 })
@@ -186,6 +186,37 @@ $.runMenu({
     } 
 })	
 ```
+
+Layouting menu: 
+
+You can pass the maximum number of buttons in line like this: 
+
+```js  
+$.runMenu({
+    message: 'Select:',
+    layout: 2,
+    'test1': () => {}, //will be on first line
+    'test2': () => {}, //will be on first line
+    'test3': () => {}, //will be on second line
+    'test4': () => {}, //will be on second line
+    'test5': () => {}, //will be on third line
+})	
+```
+Or you can pass an array of number of buttons for each line: 
+
+```js  
+$.runMenu({
+    message: 'Select:',
+    layout: [1, 2, 1, 1],
+    'test1': () => {}, //will be on first line
+    'test2': () => {}, //will be on second line
+    'test3': () => {}, //will be on second line
+    'test4': () => {}, //will be on third line
+    'test5': () => {}, //will be on fourth line
+})	
+```
+
+If you pass layout
 
 Bot will create keyboard and send it with your message, when user select if item is callback bot will call it, if it's submenu bot will send submenu.
 
