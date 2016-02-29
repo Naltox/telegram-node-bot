@@ -175,17 +175,22 @@ You can create menu with $.runMenu function:
 ```js  
 $.runMenu({
     message: 'Select:',
+    options {
+        parse_mode: 'Markdown' // in options field you can pass some additional data, like parse_mode
+    },
     'Exit': {
 	    message: 'Do you realy want to exit?',
+	    resize_keyboard: true,
 	    'yes': () => {
 		    
 	    },
 	    'no': () => {
 		    
 	    }
-    } 
+    }
 })	
 ```
+
 
 Layouting menu: 
 
