@@ -291,7 +291,7 @@ $.sendAudio(fs.createReadStream('audio.mp3'))
 For sendVoice method voice parameter is ReadStream object, example:
 
 ```js 
-$.sendAudio(fs.createReadStream('voice.ogg'))
+$.sendVoice(fs.createReadStream('voice.ogg'))
 ``` 
  
 For sendVideo method video parameter is ReadStream object, example:
