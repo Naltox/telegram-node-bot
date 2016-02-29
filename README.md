@@ -259,6 +259,7 @@ sendVideo(chatId, video)
 ```js
 sendPhotoFromUrl(chatId, url)
 sendDocumentFromUrl(chatId, url)
+sendAudioFromUrl(chatId, url)
 call(method, params)
 ```
 
