@@ -55,6 +55,21 @@ tg.router.
 ``` 
 Now all unknown commands will be handled by OtherwiseController.
 
+Sometimes your commands have some args, you can declire them like this:
+
+```js
+tg.router.
+    when(['/sum :num1 :num2'], 'SumController')
+```
+After they will be in 'query' property of scope:
+
+```js
+tg.controller('SumController', ($) => {
+	tg.for('/sum :num1 :num2', ($) => {
+		$.sendMessage(parseInt($.query.num1) + parseInt($.query.num2))
+	})
+})
+```
 
 Let's say you have some login logic in controller probably you need to route user to login 'page'.
 For that case you have routeTo function:
@@ -235,6 +250,8 @@ Scope have:
 - all methods with already set chatId
 - chatId (current chat id)
 - message
+- args ( if you have command '/test' and user will send you '/test 1' 'args' will contain 1
+- query ( object of args )
 
 ## Methods List
 List of supported methods with required parameters:
