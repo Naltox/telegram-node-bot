@@ -202,6 +202,9 @@ $.runMenu({
 	    'no': () => {
 		    
 	    }
+    },
+    'anyMatch': () => { //will be executed at any other message
+
     }
 })	
 ```
@@ -270,6 +273,15 @@ getUserProfilePhotos(userId)
 sendSticker(chatId, sticker)
 sendVoice(chatId, voice)
 sendVideo(chatId, video)
+kickChatMember(chatId, userId)
+unbanChatMember(chatId, userId)
+sendVenue(chatId, latitude, longitude, title, address, options)
+sendContact(chatId, phoneNumber, firstName, options)
+editMessageText(text, options)
+editMessageCaption(options)
+editMessageReplyMarkup(options)
+answerCallbackQuery(callbackQueryId)
+
 ```
 ## Additional methods
 
@@ -368,7 +380,7 @@ tg.inlineMod(($) => {
 ```
 
 
-'inlineMod' method passes inline scope that consists of update object and 'answerInlineQuery' and 'paginatedAnswer' methods prepared for answer that request.
+'inlineMod' method passes inline scope that consists of update object and 'answer' and 'paginatedAnswer' methods prepared for answer that request.
 So this code will be valide too:
 
 ```js
@@ -388,6 +400,26 @@ tg.inlineMod(($) => {
     $.paginatedAnswer(results, 10)
 })
 ```
+
+## Callback querys
+
+You can handle qallback querys with 'tg.callbackQuerys':
+
+```js
+tg.callbackQuerys(($) => {
+
+})
+```
+
+And you can answer them using 'tg.answerInlineQuery' method or using 'answer' method from scope:
+
+```js
+tg.callbackQuerys(($) => {
+    $.answer({text: 'test'})
+    $.answerInlineQuery($.id, {text: 'test'}) //result will be the same
+})
+```
+
 
 ## License
 
