@@ -190,7 +190,7 @@ You can create menu with $.runMenu function:
 ```js  
 $.runMenu({
     message: 'Select:',
-    options {
+    options: {
         parse_mode: 'Markdown' // in options field you can pass some additional data, like parse_mode
     },
     'Exit': {
@@ -242,6 +242,32 @@ $.runMenu({
 If you pass layout
 
 Bot will create keyboard and send it with your message, when user select if item is callback bot will call it, if it's submenu bot will send submenu.
+
+## Inline Menu
+
+You can crete inline menu using tg.runInlineMenu or $.runInlineMenu using scope:
+
+tg.runInlineMenu(chatId, methodName, methodArgs... , menuData, layout)
+
+Example:
+
+```js
+$.runInlineMenu('sendMessage', 'Select:', {}, [
+    {
+        text: '1',
+        callback: ($) => {
+            console.log(1)
+        }
+    },
+    {
+        text: '2',
+        url: 'telegram.org',
+        callback: ($) => {
+            console.log('telegram.org')
+        }
+    }
+], [2])
+```
 
 
 ## Scope

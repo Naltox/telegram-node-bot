@@ -1,6 +1,6 @@
 {
   "name": "telegram-node-bot",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "Modile for creating Telegram bots.",
   "main": "lib/telegram.js",
   "scripts": {
