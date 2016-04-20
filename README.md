@@ -401,12 +401,12 @@ tg.inlineMod(($) => {
 })
 ```
 
-## Callback querys
+## Callback queries
 
-You can handle qallback querys with 'tg.callbackQuerys':
+You can handle qallback queries with 'tg.callbackQueries':
 
 ```js
-tg.callbackQuerys(($) => {
+tg.callbackQueries(($) => {
 
 })
 ```
@@ -414,7 +414,7 @@ tg.callbackQuerys(($) => {
 And you can answer them using 'tg.answerInlineQuery' method or using 'answer' method from scope:
 
 ```js
-tg.callbackQuerys(($) => {
+tg.callbackQueries(($) => {
     $.answer({text: 'test'})
     $.answerInlineQuery($.id, {text: 'test'}) //result will be the same
 })
