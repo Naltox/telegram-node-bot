@@ -177,10 +177,15 @@ var form = {
 
 $.runForm(form, (result) => {
 	console.log(result)
-})	
+})
+
+// or else:
+//$.runForm(form, options, (result) => {
+//    console.log(result)
+//})
 ```
 
-Bot will ask send the 'q' message to user, wait for message, validate it with your validator function and save the answer, if validation fails bot will ask again that question.
+Bot will ask send the 'q' message to user, wait for message, validate it with your validator function and save the answer, if validation fails bot will ask again that question. You can add a cancel button by specifying the 'cancelCaption' parameter in options argument. If user clicks to cancel button, you gets null in your callback.
 
 ## Menu
 
