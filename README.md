@@ -367,7 +367,7 @@ $.sendSticker(fs.createReadStream('sticker.webp'))
 You can handle inline requests with 'tg.inlineMode':
 
 ```js
-tg.inlineMod(($) => {
+tg.inlineMode(($) => {
 
 })
 ```
@@ -375,7 +375,7 @@ tg.inlineMod(($) => {
 To answer request you can use 'answerInlineQuery' and 'paginatedAnswer' methods:
 
 ```js
-tg.inlineMod(($) => {
+tg.inlineMode(($) => {
     tg.answerInlineQuery($.id, [{
         type: 'gif',
         gif_url: 'http://thecatapi.com/api/images/get?format=src&size=med&type=gif&qwe=' + Math.random().toString(36).substring(2),
@@ -388,7 +388,7 @@ tg.inlineMod(($) => {
 'paginatedAnswer' method will care about paging response for you:
 
 ```js
-tg.inlineMod(($) => {
+tg.inlineMode(($) => {
     var results = []
 
     for(var i = 0; i < 51; i++){
@@ -406,11 +406,11 @@ tg.inlineMod(($) => {
 ```
 
 
-'inlineMod' method passes inline scope that consists of update object and 'answer' and 'paginatedAnswer' methods prepared for answer that request.
+'inlineMode' method passes inline scope that consists of update object and 'answer' and 'paginatedAnswer' methods prepared for answer that request.
 So this code will be valide too:
 
 ```js
-tg.inlineMod(($) => {
+tg.inlineMode(($) => {
     var results = []
 
     for(var i = 0; i < 51; i++){
