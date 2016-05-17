@@ -1,6 +1,17 @@
 # telegram-bot
 Very powerful module for creating Telegram bots. 
 
+## Installation
+
+To install the stable version:
+
+```bash
+npm install --save telegram-node-bot
+```
+
+This assumes you are using [npm](https://www.npmjs.com/) as your package manager.
+If you don’t, you can access these files on [npmcdn](https://npmcdn.com/telegram-node-bot/), download them, or point your package manager to them.
+
 ## Get started
 
 First of all you need to create your bot and get Token, you can do it right in telegram, just write to @BotFather.
