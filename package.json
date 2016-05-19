@@ -1,7 +1,7 @@
 {
   "name": "telegram-node-bot",
   "version": "2.1.2",
-  "description": "Modile for creating Telegram bots.",
+  "description": "Module for creating Telegram bots.",
   "main": "lib/telegram.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
