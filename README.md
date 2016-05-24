@@ -108,7 +108,7 @@ tg.controller('ExampleController', ($) => {
 		 //will handle /test command		
 	}) 	
 	tg.for('/example', ($) => {
-		 //will handle /exaple command		
+		 //will handle /example command		
 	})
 })
 ``` 
