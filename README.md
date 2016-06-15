@@ -193,6 +193,26 @@ $.runForm(form, (result) => {
 
 Bot will ask send the 'q' message to user, wait for message, validate it with your validator function and save the answer, if validation fails bot will ask again that question.
 
+You can set a `fullData` option to get the full user response object, instead of the bare message, as in:
+
+```js
+var form = {
+    busStop: {
+        q: "Send your address or position",
+        error: "Sorry, wrong input",
+        validator: (input, callback) => {
+            if (input['text'] || input['location']) {
+                callback(true);
+            }
+            else {
+                callback(false);
+            }
+        },
+        fullData: true
+    }
+};
+```
+
 ## Menu
 
 You can create menu with $.runMenu function: 
