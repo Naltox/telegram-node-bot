@@ -1,5 +1,5 @@
 # telegram-bot
-Very powerful module for creating Telegram bots. 
+Very powerful module for creating Telegram bots.
 
 ## Installation
 
@@ -18,24 +18,24 @@ First of all you need to create your bot and get Token, you can do it right in t
 
 Now lets write simple bot!
 
-```js 
+```js
 'use strict'
 
 var tg = require('telegram-node-bot')('YOUR_TOKEN')
 
 tg.router.
     when(['ping'], 'PingController')
-     
+
 tg.controller('PingController', ($) => {
 	tg.for('ping', () => {
 		$.sendMessage('pong')
 	})
-}) 
+})
 ```
 Thats it!
 
 ![Bot](ScreenShot.png)
-  
+
 ## Introduction
 
 I'm using something like MVC, so we have router and controllers.
@@ -43,27 +43,27 @@ First you need to declare your commands and which controller will handle it.
 Then you need to write controllers and handle specific commands in it.
 
 ## Router
-For example if we want three command: /start, /stop and /restart 
+For example if we want three command: /start, /stop and /restart
 And we want that commands to be handled by different controllers.
 
-Router declaration code will be like this: 
+Router declaration code will be like this:
 
-```js 
+```js
 tg.router.
     when(['/start'], 'StartController').
     when(['/stop'], 'StopController').
     when(['/restart'], 'RestartController')
 ```
-	
-Probably we will have a case when user send us command we didn't know, for that case router have otherwise function: 
 
-```js 
+Probably we will have a case when user send us command we didn't know, for that case router have otherwise function:
+
+```js
 tg.router.
     when(['/start'], 'StartController').
     when(['/stop'], 'StopController').
     when(['/restart'], 'RestartController').
     otherwise('OtherwiseController')
-``` 
+```
 Now all unknown commands will be handled by OtherwiseController.
 
 Sometimes your commands have some args, you can declire them like this:
@@ -86,79 +86,79 @@ Let's say you have some login logic in controller probably you need to route use
 For that case you have routeTo function:
 
 
-```js 
+```js
 tg.controller('StartController', ($) => {
 	tg.for('/profile', ($) => {
 		if(!logined){
 			$.routeTo("/login")
-		}		
-	}) 
+		}
+	})
 })
-``` 
+```
 
 ## Controllers
 
-Controllers are very simple: 
+Controllers are very simple:
 
-```js 
+```js
 tg.controller('ExampleController', ($) => {
 	//you can create any functions, variables, etc. here
-	
+
 	tg.for('/test', ($) => {
-		 //will handle /test command		
-	}) 	
+		 //will handle /test command
+	})
 	tg.for('/example', ($) => {
-		 //will handle /example command		
+		 //will handle /example command
 	})
 })
-``` 
+```
 
 Remember: if you want to handle command in controller you need to declare it in router.
 
 ## Сhain
 
-Let's say you asked user for something, now you need to wait his next message and make some logic, right? 
+Let's say you asked user for something, now you need to wait his next message and make some logic, right?
 
-waitForRequest function well help you: 
+waitForRequest function well help you:
 
-```js 
-tg.controller('ExampleController', ($) => { 
+```js
+tg.controller('ExampleController', ($) => {
 	tg.for('/reg', ($) => {
 		 $.sendMessage('Send me your name!')
 		 $.waitForRequest(($) => {
 			 $.sendMessage('Hi ' + $.message.text + '!')
-		 })	
-	}) 	 
+		 })
+	})
 })
-``` 
+```
 
 waitForRequest will call callback and pass new context.
 
 
 ## Methods
-You can call methods two ways: 
+You can call methods two ways:
 
-Directly from tg: 
+Directly from tg:
 
-```js  
+```js
 tg.sendMessage(chatId, 'Hi')
 ```
 
 Or if you using controllers controller will pass you context '$' than already knows user id, so it's more easy to use:
 
-```js  
+```js
 $.sendMessage('Hi')
 ```
 
-All methods have required parameters and optional parameters, you can find them in  [api documentation](https://core.telegram.org/bots/api#available-methods) 
+All methods have required parameters and optional parameters, you can find them in  [api documentation](https://core.telegram.org/bots/api#available-methods)
 Also all methods have callback parameter, callback returns request result, callback parameter always the last one.
 
 
 ## Forms
 
-With $.runForm function you can create forms: 
+With tg.runForm or $.runForm function you can create forms:
 
-```js  
+```js
 var form = {
     name: {
 	    q: 'Send me your name',
@@ -168,7 +168,7 @@ var form = {
 			    callback(true)
 			    return
 		    }
-			     
+
 		    callback(false)
 	    }
     },
@@ -180,25 +180,36 @@ var form = {
 			    callback(true)
 			    return
 		    }
-			     
+
 		    callback(false)
 	    }
-    }		    
+    }
 }
 
 $.runForm(form, (result) => {
 	console.log(result)
-})	
+})
+
+// or
+
+tg.runForm(chatId, form, (result) => {
+    console.log(result)
+})
 ```
 
-Bot will ask send the 'q' message to user, wait for message, validate it with your validator function and save the answer, if validation fails bot will ask again that question.
+Bot will send the 'q' message to user, wait for an answer, validate it with your validator function and save the answer,
+if validation fails bot will ask again that question.
+
+You can also send the form to another chat instead of the originating one by using `tg.runForm` by passing the 'chatId'
+(which can be the id of either a group chat or a user's id for a private chat) instead of `$.runForm` which gets chatId
+from the scope.
 
 ## Menu
 
-You can create menu with $.runMenu function: 
+You can create menu with $.runMenu function:
 
 
-```js  
+```js
 $.runMenu({
     message: 'Select:',
     options: {
@@ -208,24 +219,24 @@ $.runMenu({
 	    message: 'Do you realy want to exit?',
 	    resize_keyboard: true,
 	    'yes': () => {
-		    
+
 	    },
 	    'no': () => {
-		    
+
 	    }
     },
     'anyMatch': () => { //will be executed at any other message
 
     }
-})	
+})
 ```
 
 
-Layouting menu: 
+Layouting menu:
 
-You can pass the maximum number of buttons in line like this: 
+You can pass the maximum number of buttons in line like this:
 
-```js  
+```js
 $.runMenu({
     message: 'Select:',
     layout: 2,
@@ -234,11 +245,11 @@ $.runMenu({
     'test3': () => {}, //will be on second line
     'test4': () => {}, //will be on second line
     'test5': () => {}, //will be on third line
-})	
+})
 ```
-Or you can pass an array of number of buttons for each line: 
+Or you can pass an array of number of buttons for each line:
 
-```js  
+```js
 $.runMenu({
     message: 'Select:',
     layout: [1, 2, 1, 1],
@@ -247,7 +258,7 @@ $.runMenu({
     'test3': () => {}, //will be on second line
     'test4': () => {}, //will be on third line
     'test5': () => {}, //will be on fourth line
-})	
+})
 ```
 
 If you pass layout
@@ -297,7 +308,7 @@ Scope have:
 List of supported methods with required parameters:
 
 
-```js  
+```js
 sendPhoto(chatId, photo)
 sendDocument(chatId, document)
 sendMessage(chatId, text)
@@ -331,9 +342,9 @@ call(method, params)
 
 ## Additional info
 
-For sendDocument method document parameter need to be like this: 
+For sendDocument method document parameter need to be like this:
 
-```js  
+```js
 var doc =  {
     value: fs.createReadStream('file.png'), //stream
     filename: 'photo.png',
@@ -345,31 +356,31 @@ $.sendDocument(doc)
 
 For sendPhoto method photo parameter is ReadStream object, example:
 
-```js  
+```js
 $.sendPhoto(fs.createReadStream('photo.jpeg'))
 ```
 
 For sendAudio method audio parameter is ReadStream object, example:
 
-```js 
+```js
 $.sendAudio(fs.createReadStream('audio.mp3'))
-``` 
+```
 
 For sendVoice method voice parameter is ReadStream object, example:
 
-```js 
+```js
 $.sendVoice(fs.createReadStream('voice.ogg'))
-``` 
- 
+```
+
 For sendVideo method video parameter is ReadStream object, example:
 
-```js 
+```js
 $.sendVideo(fs.createReadStream('video.mp4'))
-``` 
+```
 
 For sendSticker method sticker parameter is ReadStream object, example:
 
-```js 
+```js
 $.sendSticker(fs.createReadStream('sticker.webp'))
 ```
 
