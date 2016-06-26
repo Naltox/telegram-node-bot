@@ -1,0 +1,6 @@
+{
+  "source": {
+    "include": [ "../telegrapher/lib", "../telegrapher/README.md" ],
+    "exclude": [ "../telegrapher/api-scheme.", "../telegrapher/node_modules" ]
+  }
+}

@@ -1,5 +1,7 @@
-# telegram-bot
-Very powerful module for creating Telegram bots. 
+# telegram-node-bot
+Very powerful module for creating Telegram bots.
+
+[Full API reference](http://nabovyan.xyz/telegram-node-bot/)
 
 ## Installation
 
@@ -12,30 +14,57 @@ npm install --save telegram-node-bot
 This assumes you are using [npm](https://www.npmjs.com/) as your package manager.
 If you don’t, you can access these files on [npmcdn](https://npmcdn.com/telegram-node-bot/), download them, or point your package manager to them.
 
+## Whats new in 3.0?
+
+* rewritten from scratch
+* native telegram models (generated from documentation)
+* sessions
+* logging (you can even use your logger)
+* better inline mode support
+* full API support
+* Promises
+* Much safer code, safer working with network
+* better router
+* support for external scope extensions
+* controllers are classes now
+* middleware
+* and more!
+
 ## Get started
 
 First of all you need to create your bot and get Token, you can do it right in telegram, just write to @BotFather.
 
-Now lets write simple bot!
+Now let's write simple bot!
 
-```js 
+```js
 'use strict'
 
-var tg = require('telegram-node-bot')('YOUR_TOKEN')
+const Telegram = require('telegram-node-bot')
+const TelegramBaseController = Telegram.TelegramBaseController
+const tg = new Telegram.Telegram('YOUR_TOKEN')
 
-tg.router.
-    when(['ping'], 'PingController')
-     
-tg.controller('PingController', ($) => {
-	tg.for('ping', () => {
-		$.sendMessage('pong')
-	})
-}) 
+class PingController extends TelegramBaseController {
+    /**
+     * @param {Scope} $
+     */
+    pingHandler($) {
+        $.sendMessage('pong')
+    }
+
+    get routes() {
+        return {
+            'ping': 'pingHandler'
+        }
+    }
+}
+
+tg.router
+    .when(['ping'], new PingController())
 ```
-Thats it!
+That's it!
 
 ![Bot](ScreenShot.png)
-  
+
 ## Introduction
 
 I'm using something like MVC, so we have router and controllers.
@@ -43,162 +72,212 @@ First you need to declare your commands and which controller will handle it.
 Then you need to write controllers and handle specific commands in it.
 
 ## Router
-For example if we want three command: /start, /stop and /restart 
+Lets say our bot has three commands: /start, /stop and /restart
 And we want that commands to be handled by different controllers.
 
-Router declaration code will be like this: 
+Router declaration code will be like this:
 
-```js 
-tg.router.
-    when(['/start'], 'StartController').
-    when(['/stop'], 'StopController').
-    when(['/restart'], 'RestartController')
+```js
+tg.router
+    .when('/start', new StartController())
+    .when('/stop', new StopController())
+    .when('/restart', new RestartController())
 ```
-	
-Probably we will have a case when user send us command we didn't know, for that case router have otherwise function: 
 
-```js 
-tg.router.
-    when(['/start'], 'StartController').
-    when(['/stop'], 'StopController').
-    when(['/restart'], 'RestartController').
-    otherwise('OtherwiseController')
-``` 
+Probably we will have a case when user send us command we didn't know, for that case router have `otherwise` function:
+
+```js
+tg.router
+    .when('/start', new StartController())
+    .when('/stop', new StopController())
+    .when('/restart', new RestartController())
+    .otherwise(new OtherwiseController())
+```
 Now all unknown commands will be handled by OtherwiseController.
 
-Sometimes your commands have some args, you can declire them like this:
+Router also has `any` method, controller passed to that method will be called for all messages.
+
+Sometimes your commands may have some args, you can declare them like this:
 
 ```js
-tg.router.
-    when(['/sum :num1 :num2'], 'SumController')
+tg.router
+    .when('/sum :num1 :num2', new SumController())
 ```
-After they will be in 'query' property of scope:
+After that they will be in `query` property of scope:
 
 ```js
-tg.controller('SumController', ($) => {
-	tg.for('/sum :num1 :num2', ($) => {
-		$.sendMessage(parseInt($.query.num1) + parseInt($.query.num2))
-	})
-})
+/**
+ * @param {Scope} $
+ */
+sum($) {
+    $.sendMessage(parseInt($.query.num1) + parseInt($.query.num2))
+}
 ```
 
-Let's say you have some login logic in controller probably you need to route user to login 'page'.
-For that case you have routeTo function:
+You can also pass `RegExp` as a command, all values fetched by RegExp will be in `query`.
 
+You can define controller for inline queries using `inlineQuery` method:
 
-```js 
-tg.controller('StartController', ($) => {
-	tg.for('/profile', ($) => {
-		if(!logined){
-			$.routeTo("/login")
-		}		
-	}) 
-})
-``` 
+```js
+tg.router
+    .inlineQuery(new InlineModeController())
+```
+
+And controllers for callback queries using `callbackQuery`:
+
+```js
+tg.router
+    .callbackQuery(new CallbackQueryController())
+```
 
 ## Controllers
 
-Controllers are very simple: 
+There are three types of controllers:
 
-```js 
-tg.controller('ExampleController', ($) => {
-	//you can create any functions, variables, etc. here
-	
-	tg.for('/test', ($) => {
-		 //will handle /test command		
-	}) 	
-	tg.for('/example', ($) => {
-		 //will handle /exaple command		
-	})
-})
-``` 
-
-Remember: if you want to handle command in controller you need to declare it in router.
-
-## Сhain
-
-Let's say you asked user for something, now you need to wait his next message and make some logic, right? 
-
-waitForRequest function well help you: 
-
-```js 
-tg.controller('ExampleController', ($) => { 
-	tg.for('/reg', ($) => {
-		 $.sendMessage('Send me your name!')
-		 $.waitForRequest(($) => {
-			 $.sendMessage('Hi ' + $.message.text + '!')
-		 })	
-	}) 	 
-})
-``` 
-
-waitForRequest will call callback and pass new context.
+* Controller for messages - `TelegramBaseController`
+* Controller for CallbackQueries - `TelegramBaseCallbackQueryController`
+* Controller for InlineQueries - `TelegramBaseInlineQueryController`
 
 
-## Methods
-You can call methods two ways: 
+## TelegramBaseController
 
-Directly from tg: 
+To create controller for message updates you must extend `TelegramBaseController`.
 
-```js  
-tg.sendMessage(chatId, 'Hi')
+If you want specific methods of your controller be called for specific commands, you should return a plain object in `routes` property where key is a route and value is name of your method.
+In that case `handle` method will not be called and scope will be passed to your method.
+Example:
+
+```js
+class TestController extends TelegramBaseController {
+    get routes() {
+        return {
+            'test': 'testHandler'
+        }
+    }
+}
 ```
 
-Or if you using controllers controller will pass you context '$' than already knows user id, so it's more easy to use:
+If there are no routes defined then `handle` method of your controller will be called.
 
-```js  
+There is also `before` method, this method will be called after all updates and you should return the scope, you can modify scope if you want:
+
+```js
+class TestController extends TelegramBaseController {
+    before(command, scope) {
+        scope.someData = true
+
+        return scope
+    }
+}
+```
+Remember: if you want to handle command in controller you need to declare it in router.
+
+All instances of TelegramBaseController also have private `_api` property which is a reference to `TelegramApi` and private `_localization` property which is a reference to `Ivan`
+
+## TelegramBaseCallbackQueryController
+
+To create such controller you must extend TelegramBaseCallbackQueryController.
+
+This controllers are very simple, they have only one method - `handle`, this method will be called for all queries and instance of `CallbackQuery` will be passed.
+
+## TelegramBaseInlineQueryController
+
+To create such controller you must extend TelegramBaseInlineQueryController.
+
+These controllers also have `handle` method which will be called for all queries and an instance of `InlineScope` will be passed.
+Also they its have `chosenResult` method which will be called when user select some result, an instance of `ChosenInlineResult`
+
+Also as the `TelegramBaseController` it has `_api` and `_localization` properties.
+
+
+## API
+You can call api methods two ways:
+
+Directly from tg:
+
+```js
+tg.api.sendMessage(chatId, 'Hi')
+```
+
+Or if you using controllers controller will pass you context `$` that already knows current chat id, so it's more easy to use:
+
+```js
 $.sendMessage('Hi')
 ```
 
-All methods have required parameters and optional parameters, you can find them in  [api documentation](https://core.telegram.org/bots/api#available-methods) 
-Also all methods have callback parameter, callback returns request result, callback parameter always the last one.
+All methods have required parameters and optional parameters, you can find them in  [api documentation](https://core.telegram.org/bots/api#available-methods)
+If you want to pass optional parameters you should pass them as an object:
+```js
+$.sendMessage('Hi', { disable_notification: true })
+```
 
+## Scope
+
+There is two types of scope:
+
+* scope for message controllers - `Scope`
+* scope for inline mode controller - `InlineScope`
+
+Message controllers scope:
+
+scope will be passed to `handle` method or to your methods defined in `routes`
+
+Main feature of scope is that scope already knows current chat id, so there is no need to pass that parameter.
+Scope have all api methods that have chatId as their first parameter already filled.
+
+Scope also contains some information about update.
+
+
+Inline controllers scope also has all api methods filled with userId.
 
 ## Forms
 
-With $.runForm function you can create forms: 
+In message controllers scope has `runForm` method.
 
-```js  
-var form = {
+With `$.runForm` method you can create forms:
+
+```js
+const form = {
     name: {
 	    q: 'Send me your name',
 	    error: 'sorry, wrong input',
-	    validator: (input, callback) => {
-		    if(input['text']) {
+	    validator: (message, callback) => {
+		    if(message.text) {
 			    callback(true)
 			    return
 		    }
-			     
+
 		    callback(false)
 	    }
     },
     age: {
 	    q: 'Send me your age',
 	    error: 'sorry, wrong input',
-	    validator: (input, callback) => {
-		    if(input['text'] && IsNumeric(input['text'])) {
+	    validator: (message, callback) => {
+		    if(message.text && IsNumeric(message.text)) {
 			    callback(true)
 			    return
 		    }
-			     
+
 		    callback(false)
 	    }
-    }		    
+    }
 }
 
 $.runForm(form, (result) => {
 	console.log(result)
-})	
+})
 ```
 
-Bot will ask send the 'q' message to user, wait for message, validate it with your validator function and save the answer, if validation fails bot will ask again that question.
+Bot will send the 'q' message to user, wait for message, validate it with your validator function and save the answer, if validation fails bot will ask again that question.
+You can also do some filtering in your validator, so you can pass the result as second parameter to callback.
+You can also pass keyboard to `keyboard` field.
 
 ## Menu
 
-You can create menu with $.runMenu function: 
+You can create menu with $.runMenu function:
 
-
-```js  
+```js
 $.runMenu({
     message: 'Select:',
     options: {
@@ -208,24 +287,25 @@ $.runMenu({
 	    message: 'Do you realy want to exit?',
 	    resize_keyboard: true,
 	    'yes': () => {
-		    
+
 	    },
 	    'no': () => {
-		    
+
 	    }
     },
     'anyMatch': () => { //will be executed at any other message
 
     }
-})	
+})
 ```
 
+Bot will create keyboard and send it with your message, when user tap button bot will call its callback, if it's submenu bot will send submenu.
 
-Layouting menu: 
+Layouting menu:
 
-You can pass the maximum number of buttons in line like this: 
+You can pass the maximum number of buttons in line like this:
 
-```js  
+```js
 $.runMenu({
     message: 'Select:',
     layout: 2,
@@ -234,11 +314,11 @@ $.runMenu({
     'test3': () => {}, //will be on second line
     'test4': () => {}, //will be on second line
     'test5': () => {}, //will be on third line
-})	
+})
 ```
-Or you can pass an array of number of buttons for each line: 
+Or you can pass an array of number of buttons for each line:
 
-```js  
+```js
 $.runMenu({
     message: 'Select:',
     layout: [1, 2, 1, 1],
@@ -247,216 +327,172 @@ $.runMenu({
     'test3': () => {}, //will be on second line
     'test4': () => {}, //will be on third line
     'test5': () => {}, //will be on fourth line
-})	
+})
 ```
-
-If you pass layout
-
-Bot will create keyboard and send it with your message, when user select if item is callback bot will call it, if it's submenu bot will send submenu.
 
 ## Inline Menu
 
-You can crete inline menu using tg.runInlineMenu or $.runInlineMenu using scope:
-
-tg.runInlineMenu(chatId, methodName, methodArgs... , menuData, layout)
-
-Example:
+You can create inline menu using $.runInlineMenu:
 
 ```js
-$.runInlineMenu('sendMessage', 'Select:', {}, [
-    {
-        text: '1',
-        callback: ($) => {
-            console.log(1)
+$.runInlineMenu({
+    layout: 2, //some layouting here
+    method: 'sendMessage', //here you must pass the method name
+    params: ['text'], //here you must pass the parameters for that method
+    menu: [
+        {
+            text: '1', //text of the button
+            callback: (callbackQuery) => {
+                console.log(1)
+            }
+        },
+        {
+            text: '2',
+            callback: (callbackQuery) => {
+                console.log(2)
+            }
         }
-    },
-    {
-        text: '2',
-        url: 'telegram.org',
-        callback: ($) => {
-            console.log('telegram.org')
-        }
+    ]
+})
+```
+
+## waitForRequest
+
+Messages controller scope has `waitForRequest` method after calling that the next update from current user will be passed to promise.
+
+## waitForCallbackQuery
+
+If you send some inline keyboard after that you can call this method, pass to it string or array of string with callback data or your InlineKeyboardMarkup and then when user press button CallbackQuery will be passed to Promise
+
+
+## Sessions
+
+Message controllers scope has two properties for sessions:
+
+* current chat session - $.chatSession
+* current user session - $.userSession
+
+Sessions work like plain objects:
+
+```js
+$.userSession.name = 'Bill'
+
+$.console.log($.userSession.name)
+```
+
+By default sessions are stored in memory, but you can store them anywhere, you need to extend `BaseStorage` and pass instance of your storage to `Telegram`:
+
+```js
+const tg = new Telegram.Telegram('YOUR_TOKEN', null, new MyStorage())
+```
+
+## Logging
+
+Module makes some logs during work, by default logs are written to console, but you can create your own logger if you want, you must extend `BaseLogger` and pass instance of your logger to `Telegram`:
+
+```js
+const tg = new Telegram.Telegram('YOUR_TOKEN', new MyLogger())
+```
+
+## Localization
+
+To use localization you need to pass your localization files to `Telegram`, they must be like this:
+
+```js
+{
+  "lang": "Ru",
+  "phrases": {
+    "startMessage": "тест"
+  }
+}
+```
+
+after creating your files you need to pass them to `Telegram`:
+
+```js
+const tg = new Telegram.Telegram('YOUR_TOKEN', null, null, [ require('./Ru.json') ])
+```
+
+Now you can use them in controllers like this:
+```js
+console.log(this._localization.Ru.startMessage)
+```
+
+You can even set the language for specific user:
+```js
+this._localization.setLanguageForUser(123456, 'Ru')
+```
+
+Or get phrases for user:
+```js
+this._localization.forUser(123456)
+```
+
+## Scope extensions:
+
+Lets say you have some function that you want to be in scope, now you can do that like this:
+
+
+```js
+'use strict'
+
+const Telegram = require('telegram-node-bot')
+const TelegramBaseController = Telegram.TelegramBaseController
+const BaseScopeExtension = Telegram.BaseScopeExtension
+const tg = new Telegram.Telegram('YOUR_TOKEN')
+
+class SumScopeExtension extends BaseScopeExtension {
+    process(num1, num2) {
+        return num1 + num2
     }
-], [2])
-```
 
-
-## Scope
-
-As you can see controller methods always give you scope ( $ ).
-
-Scope have:
-
-- all methods with already set chatId
-- chatId (current chat id)
-- message
-- args ( if you have command '/test' and user will send you '/test 1' 'args' will contain 1
-- query ( object of args )
-
-## Methods List
-List of supported methods with required parameters:
-
-
-```js  
-sendPhoto(chatId, photo)
-sendDocument(chatId, document)
-sendMessage(chatId, text)
-sendLocation(chatId, latitude, longitude)
-sendAudio(chatId, audio)
-forwardMessage(chatId, fromChatId, messageId)
-getFile(fileId)
-sendChatAction(chatId, action)
-getUserProfilePhotos(userId)
-sendSticker(chatId, sticker)
-sendVoice(chatId, voice)
-sendVideo(chatId, video)
-kickChatMember(chatId, userId)
-unbanChatMember(chatId, userId)
-sendVenue(chatId, latitude, longitude, title, address, options)
-sendContact(chatId, phoneNumber, firstName, options)
-editMessageText(text, options)
-editMessageCaption(options)
-editMessageReplyMarkup(options)
-answerCallbackQuery(callbackQueryId)
-
-```
-## Additional methods
-
-```js
-sendPhotoFromUrl(chatId, url)
-sendDocumentFromUrl(chatId, url)
-sendAudioFromUrl(chatId, url)
-call(method, params)
-```
-
-## Additional info
-
-For sendDocument method document parameter need to be like this: 
-
-```js  
-var doc =  {
-    value: fs.createReadStream('file.png'), //stream
-    filename: 'photo.png',
-    contentType: 'image/png'
+    get name() {
+        return 'sum'
+    }
 }
 
-$.sendDocument(doc)
-```
-
-For sendPhoto method photo parameter is ReadStream object, example:
-
-```js  
-$.sendPhoto(fs.createReadStream('photo.jpeg'))
-```
-
-For sendAudio method audio parameter is ReadStream object, example:
-
-```js 
-$.sendAudio(fs.createReadStream('audio.mp3'))
-``` 
-
-For sendVoice method voice parameter is ReadStream object, example:
-
-```js 
-$.sendVoice(fs.createReadStream('voice.ogg'))
-``` 
- 
-For sendVideo method video parameter is ReadStream object, example:
-
-```js 
-$.sendVideo(fs.createReadStream('video.mp4'))
-``` 
-
-For sendSticker method sticker parameter is ReadStream object, example:
-
-```js 
-$.sendSticker(fs.createReadStream('sticker.webp'))
-```
-
-## Inline mode
-
-You can handle inline requests with 'tg.inlineMode':
-
-```js
-tg.inlineMode(($) => {
-
-})
-```
-
-To answer request you can use 'answerInlineQuery' and 'paginatedAnswer' methods:
-
-```js
-tg.inlineMode(($) => {
-    tg.answerInlineQuery($.id, [{
-        type: 'gif',
-        gif_url: 'http://thecatapi.com/api/images/get?format=src&size=med&type=gif&qwe=' + Math.random().toString(36).substring(2),
-        gif_width: 250,
-        gif_height: 250,
-        thumb_url: 'http://thecatapi.com/api/images/get?format=src&size=small&type=gif&qwe=' + Math.random().toString(36).substring(2)
-    }])
-})
-```
-'paginatedAnswer' method will care about paging response for you:
-
-```js
-tg.inlineMode(($) => {
-    var results = []
-
-    for(var i = 0; i < 51; i++){
-        results.push({
-            type: 'gif',
-            gif_url: 'http://thecatapi.com/api/images/get?format=src&size=med&type=gif&uid=' + Math.random().toString(36).substring(2),
-            gif_width: 250,
-            gif_height: 250,
-            thumb_url: 'http://thecatapi.com/api/images/get?format=src&size=small&type=gif&uid=' + Math.random().toString(36).substring(2)
-        })
+class SumController extends TelegramBaseController {
+    /**
+     * @param {Scope} $
+     */
+    pingHandler($) {
+        $.sendMessage($.sum($.query.num1, $.query.num2))
     }
 
-    tg.paginatedAnswer($, results, 10)
-})
-```
-
-
-'inlineMode' method passes inline scope that consists of update object and 'answer' and 'paginatedAnswer' methods prepared for answer that request.
-So this code will be valide too:
-
-```js
-tg.inlineMode(($) => {
-    var results = []
-
-    for(var i = 0; i < 51; i++){
-        results.push({
-            type: 'gif',
-            gif_url: 'http://thecatapi.com/api/images/get?format=src&size=med&type=gif&uid=' + Math.random().toString(36).substring(2),
-            gif_width: 250,
-            gif_height: 250,
-            thumb_url: 'http://thecatapi.com/api/images/get?format=src&size=small&type=gif&uid=' + Math.random().toString(36).substring(2)
-        })
+    get routes() {
+        return {
+            '/sum :num1 :num2': 'sumHandler'
+        }
     }
+}
 
-    $.paginatedAnswer(results, 10)
-})
+tg.router
+    .when(['/sum :num1 :num2'], new SumController())
+
+tg.addScopeExtension(SumScopeExtension)
 ```
 
-## Callback queries
+## Sending files
 
-You can handle qallback queries with 'tg.callbackQueries':
+From file id:
 
 ```js
-tg.callbackQueries(($) => {
-
-})
+$.sendPhoto(InputFile.byId('ID')) or $.sendPhoto('ID')
 ```
 
-And you can answer them using 'tg.answerInlineQuery' method or using 'answer' method from scope:
+From url:
 
 ```js
-tg.callbackQueries(($) => {
-    $.answer({text: 'test'})
-    $.answerInlineQuery($.id, {text: 'test'}) //result will be the same
-})
+$.sendPhoto(InputFile.byUrl('URL', 'image.jpg')) or $.sendPhoto({ url: 'URL', filename: 'image.jpg'})
 ```
 
+By path:
+
+```js
+$.sendPhoto(InputFile.byFilePath('path/to/file')) or $.sendPhoto({ path: 'path/to/file'})
+```
+
+[Full API reference](http://nabovyan.xyz/telegram-node-bot/)
 
 ## License
 
