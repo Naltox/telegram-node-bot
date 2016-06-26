@@ -131,8 +131,7 @@ tg.router
 ```
 
 ## Controllers
-
-<<<<<<< HEAD
+ 
 There are three types of controllers:
 
 * Controller for messages - `TelegramBaseController`
@@ -141,22 +140,6 @@ There are three types of controllers:
 
 
 ## TelegramBaseController
-=======
-Controllers are very simple: 
-
-```js 
-tg.controller('ExampleController', ($) => {
-	//you can create any functions, variables, etc. here
-	
-	tg.for('/test', ($) => {
-		 //will handle /test command		
-	}) 	
-	tg.for('/example', ($) => {
-		 //will handle /example command		
-	})
-})
-``` 
->>>>>>> origin/master
 
 To create controller for message updates you must extend `TelegramBaseController`.
 
