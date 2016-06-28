@@ -1,1 +1,5 @@
 .idea/
+node_modules
+lib/models/*
+!lib/models/InlineQueryResult.js
+!lib/models/InputMessageContent.js
