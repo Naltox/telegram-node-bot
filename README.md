@@ -455,7 +455,7 @@ class SumController extends TelegramBaseController {
     /**
      * @param {Scope} $
      */
-    pingHandler($) {
+    sumHandler($) {
         $.sendMessage($.sum($.query.num1, $.query.num2))
     }
 
