@@ -342,15 +342,28 @@ $.runInlineMenu({
     menu: [
         {
             text: '1', //text of the button
-            callback: (callbackQuery) => {
+            callback: (callbackQuery, message) => { //to your callback will be passed callbackQuery and response from method
                 console.log(1)
             }
         },
         {
-            text: '2',
-            callback: (callbackQuery) => {
-                console.log(2)
-            }
+            text: 'Exit',
+            message: 'Are you sure?',
+            layout: 2,
+            menu: [ //Sub menu (current message will be edited)
+                {
+                    text: 'Yes!',
+                    callback: () => {
+
+                    }
+                },
+                {
+                    text: 'No!',
+                    callback: () => {
+
+                    }
+                }
+            ]
         }
     ]
 })
