@@ -93,7 +93,15 @@ tg.router
     .when('/restart', new RestartController())
     .otherwise(new OtherwiseController())
 ```
-Now all unknown commands will be handled by OtherwiseController.
+Now all unknown commands will be handled by OtherwiseController:
+
+```js
+class OtherwiseController extends TelegramBaseController {
+    handle() {
+        console.log('otherwise')
+    }
+}
+```
 
 Router also has `any` method, controller passed to that method will be called for all messages.
 
