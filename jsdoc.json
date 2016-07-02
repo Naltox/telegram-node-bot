@@ -1,6 +1,15 @@
 {
   "source": {
-    "include": [ "../telegrapher/lib", "../telegrapher/README.md" ],
-    "exclude": [ "../telegrapher/api-scheme.", "../telegrapher/node_modules" ]
+    "include": [ "../telegram-node-bot/lib", "../telegram-node-bot/README.md" ],
+    "exclude": [ "../telegram-node-bot/api-scheme", "../telegram-node-bot/node_modules" ]
+  },
+
+  "opts": {
+    "destination": "./docs/"
+  },
+
+  "templates": {
+    "theme": "lumen",
+    "outputSourceFiles": true
   }
 }

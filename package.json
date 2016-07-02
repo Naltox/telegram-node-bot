@@ -27,7 +27,8 @@
   },
   "devDependencies": {
     "cheerio": "^0.20.0",
-    "jsdoc": "latest"
+    "jsdoc": "latest",
+    "ink-docstrap": "latest"
   },
   "engines": {
     "node": ">=6.0.0"
