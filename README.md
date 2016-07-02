@@ -293,7 +293,7 @@ $.runMenu({
     },
     'Exit': {
 	    message: 'Do you realy want to exit?',
-	    resize_keyboard: true,
+	    resizeKeyboard: true,
 	    'yes': () => {
 
 	    },
