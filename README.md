@@ -243,7 +243,7 @@ const form = {
 	    error: 'sorry, wrong input',
 	    validator: (message, callback) => {
 		    if(message.text) {
-			    callback(true)
+			    callback(true, message.text) //you must pass the result also
 			    return
 		    }
 
@@ -255,7 +255,7 @@ const form = {
 	    error: 'sorry, wrong input',
 	    validator: (message, callback) => {
 		    if(message.text && IsNumeric(message.text)) {
-			    callback(true)
+			    callback(true, toInt(message.text))
 			    return
 		    }
 
