@@ -4,3 +4,4 @@ docs
 lib/models/*
 !lib/models/InlineQueryResult.js
 !lib/models/InputMessageContent.js
+ScreenShot.png
