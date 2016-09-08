@@ -12,7 +12,7 @@ npm install --save telegram-node-bot
 ```
 
 This assumes you are using [npm](https://www.npmjs.com/) as your package manager.
-If you don’t, you can access these files on [npmcdn](https://npmcdn.com/telegram-node-bot/), download them, or point your package manager to them.
+If you don’t, you can access these files on [unpkg](https://unpkg.com/telegram-node-bot/), download them, or point your package manager to them.
 
 ## Whats new in 3.0?
 
