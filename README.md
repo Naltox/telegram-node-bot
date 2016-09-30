@@ -1,7 +1,11 @@
 # telegram-node-bot
 Very powerful module for creating Telegram bots.
 
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=KDM7K3BBVV2E8)
+
 [Full API reference](http://nabovyan.xyz/telegram-node-bot/)
+
+[help chat](http://nabovyan.xyz/tg-dev-chat)
 
 ## Installation
 
@@ -12,23 +16,14 @@ npm install --save telegram-node-bot
 ```
 
 This assumes you are using [npm](https://www.npmjs.com/) as your package manager.
-If you don’t, you can access these files on [npmcdn](https://npmcdn.com/telegram-node-bot/), download them, or point your package manager to them.
+If you don’t, you can access these files on [unpkg](https://unpkg.com/telegram-node-bot/), download them, or point your package manager to them.
 
-## Whats new in 3.0?
+## Whats new in 4.0?
 
-* rewritten from scratch
-* native telegram models (generated from documentation)
-* sessions
-* logging (you can even use your logger)
-* better inline mode support
-* full API support
-* Promises
-* Much safer code, safer working with network
-* better router
-* support for external scope extensions
-* controllers are classes now
-* middleware
-* and more!
+* Bug fixes
+* Clustering
+* New router
+* Web admin
 
 ## Get started
 
@@ -41,6 +36,7 @@ Now let's write simple bot!
 
 const Telegram = require('telegram-node-bot')
 const TelegramBaseController = Telegram.TelegramBaseController
+const TextCommand = Telegram.TextCommand
 const tg = new Telegram.Telegram('YOUR_TOKEN')
 
 class PingController extends TelegramBaseController {
@@ -53,13 +49,16 @@ class PingController extends TelegramBaseController {
 
     get routes() {
         return {
-            'ping': 'pingHandler'
+            'pingCommand': 'pingHandler'
         }
     }
 }
 
 tg.router
-    .when(['ping'], new PingController())
+    .when(
+        new TextCommand('ping', 'pingCommand'),
+        new PingController()
+    )
 ```
 That's it!
 
@@ -79,20 +78,21 @@ Router declaration code will be like this:
 
 ```js
 tg.router
-    .when('/start', new StartController())
-    .when('/stop', new StopController())
-    .when('/restart', new RestartController())
+    .when(new TextCommand('/start'), new StartController())
+    .when(new TextCommand('/stop'), new StopController())
+    .when(new TextCommand('/restart'), new RestartController())
 ```
 
 Probably we will have a case when user send us command we didn't know, for that case router have `otherwise` function:
 
 ```js
 tg.router
-    .when('/start', new StartController())
-    .when('/stop', new StopController())
-    .when('/restart', new RestartController())
+    .when(new TextCommand('/start'), new StartController())
+    .when(new TextCommand('/stop'), new StopController())
+    .when(new TextCommand('/restart'), new RestartController())
     .otherwise(new OtherwiseController())
 ```
+
 Now all unknown commands will be handled by OtherwiseController:
 
 ```js
@@ -103,26 +103,32 @@ class OtherwiseController extends TelegramBaseController {
 }
 ```
 
-Router also has `any` method, controller passed to that method will be called for all messages.
-
-Sometimes your commands may have some args, you can declare them like this:
+In this cases for all controllers will be called `handle` method to handle request. But you can pass your custom handler name as second parameter to any command:
 
 ```js
 tg.router
-    .when('/sum :num1 :num2', new SumController())
+    .when(
+        new TextCommand('/start', 'startHandler'),
+        new StartController()
+    )
 ```
-After that they will be in `query` property of scope:
-
+Then you must add `routes` property to your controller like this:
 ```js
-/**
- * @param {Scope} $
- */
-sum($) {
-    $.sendMessage(parseInt($.query.num1) + parseInt($.query.num2))
+class StartConstoller extends TelegramBaseController {
+    /**
+     * @param {Scope} $
+     */
+    start($) {
+        $.sendMessage('Hello!')
+    }
+
+    get routes() {
+        return {
+            'startHandler': 'start'
+        }
+    }
 }
 ```
-
-You can also pass `RegExp` as a command, all values fetched by RegExp will be in `query`.
 
 You can define controller for inline queries using `inlineQuery` method:
 
@@ -138,8 +144,40 @@ tg.router
     .callbackQuery(new CallbackQueryController())
 ```
 
+## List of all commands
+
+* TextCommand - just text command like `/start`
+```js
+tg.router
+    .when(
+        new TextCommand('/start', 'startHandler'),
+        new StartController()
+    )
+```
+* RegextCommand - any regexp command
+```js
+tg.router
+    .when(
+        new RegexpCommand(/test/g, 'testHandler'),
+        new TestController()
+    )
+```
+* CustomFilterCommand - custom command
+```js
+tg.router
+    .when(
+        new CustomFilterCommand($ => {
+            return $.message.text == 'some text'
+        }, 'customFilterHandler'),
+        new CustomFilterHandlerController()
+    )
+```
+
+You can also create your own command, just extend `BaseCommand`
+
+
 ## Controllers
- 
+
 There are three types of controllers:
 
 * Controller for messages - `TelegramBaseController`
@@ -197,6 +235,45 @@ Also they its have `chosenResult` method which will be called when user select s
 
 Also as the `TelegramBaseController` it has `_api` and `_localization` properties.
 
+## Getting updates
+You can use long-pooling or webhooks to get updates.
+Long-pooling used by default. To use webhooks you need to init library like this:
+```js
+const tg = new Telegram.Telegram('YOUR_TOKEN', {
+    webhook: {
+        url: 'https://61f66256.ngrok.io',
+        port: 3000,
+        host: 'localhost'
+    }
+})
+```
+You can also create any other custom update fetcher: just extend Telegram.BaseUpdateFetcher and pass it to library:
+```js
+const tg = new Telegram.Telegram('YOUR_TOKEN', {
+    updateFetcher: new MyUpdateFetcher()
+})
+```
+
+
+## Clustering
+By default library will create one worker per cpu. You can change it like this:
+
+```js
+const tg = new Telegram.Telegram('YOUR_TOKEN', {
+    workers: 1
+})
+```
+
+## Web admin
+By default library will start web admin at localhost:3000, to change that use `webAdmin` properpty:
+```js
+const tg = new Telegram.Telegram('YOUR_TOKEN', {
+    webAdmin: {
+        port: 1234,
+        host: 'localhost'
+    }
+})
+```
 
 ## API
 You can call api methods two ways:
@@ -385,26 +462,46 @@ Messages controller scope has `waitForRequest` method after calling that the nex
 
 If you send some inline keyboard after that you can call this method, pass to it string or array of string with callback data or your InlineKeyboardMarkup and then when user press button CallbackQuery will be passed to Promise
 
-
+```js
+$.sendMessage('Send me your name')
+$.waitForRequest
+    .then($ => {
+        $.sendMessage(`Hi ${$.message.text}!`)
+    })
+```
 ## Sessions
 
-Message controllers scope has two properties for sessions:
-
-* current chat session - $.chatSession
-* current user session - $.userSession
-
-Sessions work like plain objects:
+Ror user:
 
 ```js
-$.userSession.name = 'Bill'
-
-$.console.log($.userSession.name)
+$.setUserSession('someKey', 'some data')
+    .then(() => {
+        return $.getUserSession('someKey')
+    })
+    .then(data => {
+        console.log(data)
+    })
 ```
+
+For chat:
+
+```js
+$.setChatSession('someKey', 'some data')
+    .then(() => {
+        return $.getChatSession('someKey')
+    })
+    .then(data => {
+        console.log(data)
+    })
+```
+
 
 By default sessions are stored in memory, but you can store them anywhere, you need to extend `BaseStorage` and pass instance of your storage to `Telegram`:
 
 ```js
-const tg = new Telegram.Telegram('YOUR_TOKEN', null, new MyStorage())
+const tg = new Telegram.Telegram('YOUR_TOKEN',{
+    storage: new MyStorage()
+})
 ```
 
 ## Logging
@@ -412,7 +509,9 @@ const tg = new Telegram.Telegram('YOUR_TOKEN', null, new MyStorage())
 Module makes some logs during work, by default logs are written to console, but you can create your own logger if you want, you must extend `BaseLogger` and pass instance of your logger to `Telegram`:
 
 ```js
-const tg = new Telegram.Telegram('YOUR_TOKEN', new MyLogger())
+const tg = new Telegram.Telegram('YOUR_TOKEN', {
+    logger: new MyLogger()
+})
 ```
 
 ## Localization
@@ -431,7 +530,9 @@ To use localization you need to pass your localization files to `Telegram`, they
 after creating your files you need to pass them to `Telegram`:
 
 ```js
-const tg = new Telegram.Telegram('YOUR_TOKEN', null, null, [ require('./Ru.json') ])
+const tg = new Telegram.Telegram('YOUR_TOKEN', {
+    localization: [require('./Ru.json')]
+})
 ```
 
 Now you can use them in controllers like this:
