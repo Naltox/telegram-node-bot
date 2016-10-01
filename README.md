@@ -78,18 +78,18 @@ Router declaration code will be like this:
 
 ```js
 tg.router
-    .when(new TextCommand('/start'), new StartController())
-    .when(new TextCommand('/stop'), new StopController())
-    .when(new TextCommand('/restart'), new RestartController())
+    .when(new TextCommand('/start', 'startCommand'), new StartController())
+    .when(new TextCommand('/stop', 'stopCommand'), new StopController())
+    .when(new TextCommand('/restart', 'restartCommand'), new RestartController())
 ```
 
 Probably we will have a case when user send us command we didn't know, for that case router have `otherwise` function:
 
 ```js
 tg.router
-    .when(new TextCommand('/start'), new StartController())
-    .when(new TextCommand('/stop'), new StopController())
-    .when(new TextCommand('/restart'), new RestartController())
+    .when(new TextCommand('/start', 'startCommand'), new StartController())
+    .when(new TextCommand('/stop', 'stopCommand'), new StopController())
+    .when(new TextCommand('/restart', 'restartCommand'), new RestartController())
     .otherwise(new OtherwiseController())
 ```
 
@@ -471,7 +471,7 @@ $.waitForRequest
 ```
 ## Sessions
 
-Ror user:
+For user:
 
 ```js
 $.setUserSession('someKey', 'some data')
