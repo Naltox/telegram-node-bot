@@ -209,7 +209,7 @@ There is also `before` method, this method will be called after all updates and 
 
 ```js
 class TestController extends TelegramBaseController {
-    before(command, scope) {
+    before(scope) {
         scope.someData = true
 
         return scope
