@@ -265,7 +265,7 @@ const tg = new Telegram.Telegram('YOUR_TOKEN', {
 ```
 
 ## Web admin
-By default library will start web admin at localhost:3000, to change that use `webAdmin` properpty:
+By default library will start web admin at localhost:7777, to change that use `webAdmin` properpty:
 ```js
 const tg = new Telegram.Telegram('YOUR_TOKEN', {
     webAdmin: {
