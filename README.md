@@ -264,6 +264,20 @@ const tg = new Telegram.Telegram('YOUR_TOKEN', {
 })
 ```
 
+If you want run some code on main process use `tg.onMaster` method:
+
+```js
+const tg = new Telegram.Telegram('YOUR_TOKEN', {
+    workers: 1
+})
+
+tg.sendMessage(123, 'test message') //will be sent 2 times (one time on master and one time on worker)
+
+tg.onMaster(() => {
+    tg.sendMessage(123, 'test message') //will be sent one time
+})
+```
+
 ## Web admin
 By default library will start web admin at localhost:7777, to change that use `webAdmin` properpty:
 ```js
