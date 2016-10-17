@@ -158,7 +158,7 @@ tg.router
 ```js
 tg.router
     .when(
-        new RegexpCommand(/test/g, 'testHandler'),
+        new RegexpCommand(new RegExp(/test/, 'g'), 'testHandler'),
         new TestController()
     )
 ```
