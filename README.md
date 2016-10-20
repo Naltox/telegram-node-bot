@@ -429,6 +429,30 @@ $.runMenu({
 })
 ```
 
+In order to close the menu after the button is clicked, you can use `oneTimeKeyboard: true`
+```js
+$.runMenu({
+    message: 'Select:',
+    oneTimeKeyboard: true,
+    options: {
+        parse_mode: 'Markdown' // in options field you can pass some additional data, like parse_mode
+    },
+    'Exit': {
+	    message: 'Do you realy want to exit?',
+	    resizeKeyboard: true,
+	    'yes': () => {
+
+	    },
+	    'no': () => {
+
+	    }
+    },
+    'anyMatch': () => { //will be executed at any other message
+
+    }
+})
+```
+
 ## Inline Menu
 
 You can create inline menu using $.runInlineMenu:
