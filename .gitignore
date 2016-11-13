@@ -1,8 +1,4 @@
 .idea/
 node_modules
 docs
-lib/models/*
-!lib/models/InlineQueryResult.js
-!lib/models/InputMessageContent.js
-!lib/models/CallbackGame.js
 ScreenShot.png
