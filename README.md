@@ -628,6 +628,13 @@ By path:
 $.sendPhoto(InputFile.byFilePath('path/to/file')) or $.sendPhoto({ path: 'path/to/file'})
 ```
 
+## Custom Extension
+
+[Custom Extension](https://github.com/mounlion/extension-telegram-node-bot) from [mounlion](https://github.com/mounlion)
+
+* Powerful Form (button: back, cancel, confirm, event on cancel, message on finish and confirm form)
+
+---
 [Full API reference](http://nabovyan.xyz/telegram-node-bot/)
 
 ## License
