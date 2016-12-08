@@ -154,7 +154,7 @@ tg.router
         new StartController()
     )
 ```
-* RegextCommand - any regexp command
+* RegexpCommand - any regexp command
 ```js
 tg.router
     .when(
