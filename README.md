@@ -247,6 +247,8 @@ const tg = new Telegram.Telegram('YOUR_TOKEN', {
     }
 })
 ```
+[Little guide](https://gist.github.com/Lord-Protector/c4710307ff77936ac1ce1d1bbfa61834) about how to deploy reverse proxy for webhooks on Debian server.
+
 You can also create any other custom update fetcher: just extend Telegram.BaseUpdateFetcher and pass it to library:
 ```js
 const tg = new Telegram.Telegram('YOUR_TOKEN', {
