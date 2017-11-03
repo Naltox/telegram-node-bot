@@ -114,7 +114,7 @@ tg.router
 ```
 Then you must add `routes` property to your controller like this:
 ```js
-class StartConstoller extends TelegramBaseController {
+class StartController extends TelegramBaseController {
     /**
      * @param {Scope} $
      */
