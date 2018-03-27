@@ -149,6 +149,20 @@ class ModelsGenerator {
                 })
 
                 if (isModel) apiScheme.push(model)
+            } else if (nextTag == 'P') {
+                // May be a dummy type
+                let isModel = true
+                var model = {}
+
+                model.name = $(el).text()
+                if (model.name == model.name.replace(/\s/g, "")){
+                    if (model.name == 'CallbackGame') {
+                        model.desc = $(el).next().text()
+                        model.fields = []
+
+                        if (isModel) apiScheme.push(model)
+                    }
+                }
             }
         })
 

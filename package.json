@@ -5,7 +5,8 @@
   "main": "lib/Telegram.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prepublish": "node api-scheme/GenerateTGModels.js"
+    "prepublish": "node api-scheme/GenerateTGModels.js",
+    "postinstall": "node api-scheme/GenerateTGModels.js"
   },
   "repository": {
     "type": "git",
@@ -23,9 +24,7 @@
   },
   "homepage": "https://github.com/Naltox/telegram-node-bot",
   "dependencies": {
-    "tiny_request": "latest"
-  },
-  "devDependencies": {
+    "tiny_request": "latest",
     "cheerio": "^0.20.0",
     "jsdoc": "latest",
     "ink-docstrap": "latest"
