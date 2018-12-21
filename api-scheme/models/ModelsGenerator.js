@@ -9,6 +9,7 @@ const JS_TYPES = {
     String: 'string',
     Float: 'number',
     'Float number': 'number',
+    'InputFile or String': 'string',
     Boolean: 'boolean',
     True: 'boolean',
     False: 'boolean'
